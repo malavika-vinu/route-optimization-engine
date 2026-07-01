@@ -14,7 +14,7 @@ def calculate_distance(loc1: Location, loc2: Location) -> float:            #Euc
     d = math.sqrt(x + y)
     return d
 
-def nearest_neighbor(locations: list) -> list:                              #Calculating route using Nearest Neighbour algorithm
+def nearest_neighbor(locations: list) -> list:                              #Calculating route using Nearest Neighbor algorithm
     unvisited = locations[1:]
     visited = [locations[0]]
 
