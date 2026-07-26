@@ -2,14 +2,14 @@ import math
 
 
 class Location:                                                             #Location struct
-    def __init__(self, name, x, y):
+    def __init__(self, name, lat, lng):
         self.name = name
-        self.x = x
-        self.y = y
+        self.lat = lat
+        self.lng = lng
 
 def calculate_distance(loc1: Location, loc2: Location) -> float:            #Euclidean Distance
-    x = (loc1.x - loc2.x)**2
-    y = (loc1.y - loc2.y)**2
+    x = (loc1.lat - loc2.lat)**2
+    y = (loc1.lng - loc2.lng)**2
 
     d = math.sqrt(x + y)
     return d

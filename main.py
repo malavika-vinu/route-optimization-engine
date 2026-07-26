@@ -6,8 +6,8 @@ app = FastAPI()
 
 class LocationInput(BaseModel):
     name: str
-    x: float
-    y: float
+    lat: float
+    lng: float
 
 class RouteRequest(BaseModel):
     locations: list[LocationInput]
@@ -15,6 +15,6 @@ class RouteRequest(BaseModel):
 @app.post('/optimize-route')
 
 def optimize_route(request: RouteRequest):
-    locations = [Location(l.name, l.x, l.y) for l in request.locations]
+    locations = [Location(l.name, l.lat, l.lng) for l in request.locations]
     route = nearest_neighbor(locations)
-    return {"route" : [{"name": stop.name, "x": stop.x, "y": stop.y} for stop in route]}
+    return {"route" : [{"name": stop.name, "lat": stop.lat, "lng": stop.lng} for stop in route]}
