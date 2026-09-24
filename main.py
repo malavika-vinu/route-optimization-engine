@@ -1,7 +1,7 @@
 from typing import Literal
 from fastapi import FastAPI
 from pydantic import BaseModel
-from src.algorithm import Location, nearest_neighbor, ortools_route
+from src.algorithm import Location, nearest_neighbor, ortools_route, total_route_distance
 
 app = FastAPI()
 
@@ -24,4 +24,8 @@ def optimize_route(request: RouteRequest):
     locations = [Location(l.name, l.lat, l.lng) for l in request.locations]
     algorithm_func = ALGORITHMS[request.algorithm]
     route = algorithm_func(locations)
-    return {"route": [{"name": stop.name, "lat": stop.lat, "lng": stop.lng} for stop in route]}
+    distance = round(total_route_distance(route), 2)
+    return {
+        "route": [{"name": stop.name, "lat": stop.lat, "lng": stop.lng} for stop in route],
+        "total_distance": distance,
+    }
