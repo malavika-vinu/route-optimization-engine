@@ -1,7 +1,10 @@
+import os
 import streamlit as st
 import requests
 import folium
 from streamlit_folium import st_folium
+
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 st.title("Smart Route Optimization Engine")
 st.write("Add delivery locations and get the most efficient route.")
@@ -46,15 +49,19 @@ if st.button("Optimize Route"):
     if len(st.session_state["locations"]) < 2:
         st.error("Please add atleast 2 locations.")
     else:
-        with st.spinner("Optimizing route... (OR-Tools searches for up to 5 seconds)"):
-            response = requests.post(
-                "http://127.0.0.1:8000/optimize-route",
-                json={"locations": st.session_state["locations"]}
-            )
-        if response.status_code == 200:
-            st.session_state["result"] = response.json()
-        else:
-            st.error("Something went wrong. Is the API running?")
+        try:
+            with st.spinner("Optimizing route... (OR-Tools searches for up to 5 seconds)"):
+                response = requests.post(
+                    f"{API_URL}/optimize-route",
+                    json={"locations": st.session_state["locations"]},
+                    timeout=60
+                )
+            if response.status_code == 200:
+                st.session_state["result"] = response.json()
+            else:
+                st.error(f"The API returned an error (status {response.status_code}).")
+        except requests.exceptions.RequestException:
+            st.error("Could not reach the API. Is it running?")
 
 if st.session_state["result"]:
     result = st.session_state["result"]
