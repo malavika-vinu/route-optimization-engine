@@ -1,14 +1,8 @@
-from typing import Literal
 from fastapi import FastAPI
 from pydantic import BaseModel
 from src.algorithm import Location, nearest_neighbor, ortools_route, total_route_distance
 
 app = FastAPI()
-
-ALGORITHMS = {
-    "nearest_neighbor": nearest_neighbor,
-    "ortools": ortools_route,
-}
 
 class LocationInput(BaseModel):
     name: str
@@ -17,15 +11,30 @@ class LocationInput(BaseModel):
 
 class RouteRequest(BaseModel):
     locations: list[LocationInput]
-    algorithm: Literal["nearest_neighbor", "ortools"] = "nearest_neighbor"
 
-@app.post('/optimize-route')
+@app.post("/optimize-route")
 def optimize_route(request: RouteRequest):
     locations = [Location(l.name, l.lat, l.lng) for l in request.locations]
-    algorithm_func = ALGORITHMS[request.algorithm]
-    route = algorithm_func(locations)
-    distance = round(total_route_distance(route), 2)
+    
+    nn_route = nearest_neighbor(locations)
+    nn_distance = total_route_distance(nn_route)
+    
+    or_route = ortools_route(locations)
+    or_distance = total_route_distance(or_route)
+    
+    if nn_distance == 0:
+        improvement = 0.0
+    else:
+        improvement = round(((nn_distance - or_distance) / nn_distance) * 100, 2)
+
     return {
-        "route": [{"name": stop.name, "lat": stop.lat, "lng": stop.lng} for stop in route],
-        "total_distance": distance,
+        "nearest_neighbor": {
+            "route": [{"name": s.name, "lat": s.lat, "lng": s.lng} for s in nn_route],
+            "total_distance": round(nn_distance, 4)
+        },
+        "ortools": {
+            "route": [{"name": s.name, "lat": s.lat, "lng": s.lng} for s in or_route],
+            "total_distance": round(or_distance, 4)
+        },
+        "improvement_percent": improvement
     }
