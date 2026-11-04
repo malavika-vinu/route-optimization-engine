@@ -10,10 +10,10 @@ A web app that takes a list of delivery locations and works out a short route th
 ## Screenshots
 
 **Comparison of both methods**
-![Comparison results](screenshots/comparison-results.png)
+![Comparison results](Screenshots/comparison-results.png)
 
 **Route on the map**
-![Route map](screenshots/route-map.png)
+![Route map](Screenshots/route-map.png)
 
 ## What it does
 
