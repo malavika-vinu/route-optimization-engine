@@ -68,6 +68,13 @@ Distances are straight-line distances measured in latitude/longitude degrees, no
    streamlit run app.py
    ```
 
+By default the app talks to the backend on your own computer (`http://127.0.0.1:8000`). To use a different backend, such as the hosted one, set an environment variable named `API_URL` before starting the app. In PowerShell:
+
+```
+$env:API_URL = "https://route-optimization-engine-ipgb.onrender.com"
+streamlit run app.py
+```
+
 ## Ideas for later
 
 - Use haversine distance to get real kilometres
